@@ -41,7 +41,47 @@ function validate_date($date)
     return ($d1 && $d1->format('Y-m-d') === $date) || ($d2 && $d2->format('m/d/Y') === $date);
 }
 
+// CRUD Operations
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['add'])) {
+        // Add new member
+        $memberID = sanitize_input($_POST['memberID']);
+        $firstname = sanitize_input($_POST['firstname']);
+        $lastname = sanitize_input($_POST['lastname']);
+        $birthday = sanitize_input($_POST['birthday']);
+        $email = sanitize_input($_POST['email']);
 
+        // Validate email, Member ID, and Date format
+        if (!validate_email($email)) {
+            $_SESSION['message'] = "Invalid email format.";
+            $_SESSION['msg_type'] = "danger";
+        } elseif (!validate_member_id($memberID)) {
+            $_SESSION['message'] = "Invalid Member ID format.";
+            $_SESSION['msg_type'] = "danger";
+        } elseif (!validate_date($birthday)) {
+            $_SESSION['message'] = "Invalid date format. Please use YYYY-MM-DD or MM/DD/YYYY.";
+            $_SESSION['msg_type'] = "danger";
+        } else {
+            try {
+                $database->query("INSERT INTO member (member_id, first_name, last_name, birthday, email) VALUES ('$memberID', '$firstname', '$lastname', '$birthday', '$email')")
+                    or die($database->error);
+            
+                $_SESSION['message'] = "Member added successfully!";
+                $_SESSION['msg_type'] = "success";
+            } catch (mysqli_sql_exception $e) {
+                // Handle the MySQLi SQL exception for duplicate entry
+                if ($e->getCode() == 1062) { // Error code for duplicate entry
+                    $_SESSION['message'] = " Member with the same ID already exists.";
+                    $_SESSION['msg_type'] = "danger";
+                } else {
+                    throw $e; // Re-throw the exception if it's not a duplicate entry error
+                }
+            }            
+        }
+        header("Location: {$_SERVER['PHP_SELF']}");
+        exit();
+    }
+}
 
 ?>
 
