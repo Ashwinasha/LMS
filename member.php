@@ -83,6 +83,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+if (isset($_POST['update'])) {
+    // Update member
+    $originalMemberID = sanitize_input($_POST['originalMemberID']);
+    $memberID = sanitize_input($_POST['memberID']);
+    $firstname = sanitize_input($_POST['firstname']);
+    $lastname = sanitize_input($_POST['lastname']);
+    $birthday = sanitize_input($_POST['birthday']);
+    $email = sanitize_input($_POST['email']);
+
+    // Validate email, Member ID, and Date format
+    if (!validate_email($email)) {
+        $_SESSION['message'] = "Invalid email format.";
+        $_SESSION['msg_type'] = "danger";
+    } elseif (!validate_member_id($memberID)) {
+        $_SESSION['message'] = "Invalid Member ID format.";
+        $_SESSION['msg_type'] = "danger";
+    } elseif (!validate_date($birthday)) {
+        $_SESSION['message'] = "Invalid date format. Please use YYYY-MM-DD or MM/DD/YYYY.";
+        $_SESSION['msg_type'] = "danger";
+    } else {
+        // Check if the new memberID already exists (excluding the current member being edited)
+        $checkQuery = $database->query("SELECT member_id FROM member WHERE member_id='$memberID' AND member_id<>'$originalMemberID'");
+        if ($checkQuery->num_rows > 0) {
+            $_SESSION['message'] = "Error: Member ID already exists.";
+            $_SESSION['msg_type'] = "danger";
+        } else {
+            // Perform the update operation
+            $database->query("UPDATE member SET member_id='$memberID', first_name='$firstname', last_name='$lastname', birthday='$birthday', email='$email' WHERE member_id='$originalMemberID'")
+                or die($database->error);
+
+            $_SESSION['message'] = "Member updated successfully!";
+            $_SESSION['msg_type'] = "warning";
+            header("Location: {$_SERVER['PHP_SELF']}");
+            exit();
+        }
+    }
+    header("Location: {$_SERVER['PHP_SELF']}");
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>
