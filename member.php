@@ -123,6 +123,36 @@ if (isset($_POST['update'])) {
     exit();
 }
 
+// Edit member - Populate form with existing data
+if (isset($_GET['edit'])) {
+    $editMemberID = sanitize_input($_GET['edit']);
+    $editResult = $database->query("SELECT * FROM member WHERE member_id='$editMemberID'") or die($database->error);
+    
+    if ($editResult->num_rows == 1) {
+        $editData = $editResult->fetch_assoc();
+        $editMemberID = $editData['member_id'];
+        $editFirstname = $editData['first_name'];
+        $editLastname = $editData['last_name'];
+        $editBirthday = $editData['birthday'];
+        $editEmail = $editData['email'];
+    } else {
+        // Redirect to the main page if member not found
+        header("Location: {$_SERVER['PHP_SELF']}");
+        exit();
+    }
+    }
+    
+    // Delete member
+    if (isset($_GET['delete'])) {
+        $memberID = sanitize_input($_GET['delete']);
+        $database->query("DELETE FROM member WHERE member_id='$memberID'") or die($database->error);
+    
+        $_SESSION['message'] = "Member deleted successfully!";
+        $_SESSION['msg_type'] = "danger";
+        header("Location: {$_SERVER['PHP_SELF']}");
+        exit();
+    }    
+
 ?>
 
 <!DOCTYPE html>
