@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title>Library Management System</title>
+    <style>
+        body {
+            background: url('lm.jpg') center center fixed;
+            background-size: cover;
+            text-align: center;
+            color: #ffffff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #LM {
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            padding-top: 40px;
+            color: #fff;
+            z-index: 1000;
+            background: #850e05;
+            padding: 20px;
+        }
+
+        .container {
+            height: 200px;
+            max-width: 400px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            align-items: center;
+        }
+
+        #prime {
+            font-size: x-large;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            background-color: #850e05;
+            color: white;
+
+
+        }
+        
+        .pop{
+            color: #850e05;
+            font-weight: 900;
+        }
+
+        .btn {
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: large;
+
+        }
+
+        .popup-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            /* Adjust the max-width to your preference */
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: left;
+            font-weight: bold;
+            font-size: larger;
+        }
+
+        /* Add styles for labels inside the popup */
+        .popup label {
+            color: black;
+        }
+
+        /* Add style for error message inside the popup */
+        .popup .loginError {
+            color: red;
+            margin-top: 10px;
+        }
+
+        /* Add a new style for the registration popup */
+        #registerPopup .popup {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 id="LM" class="display-5">Library Management System</h1>
+    <div class="container">
+        <div>
+            <button type="button" class="btn" id="prime" onclick="showRegisterPopup()">Register</button><br>
+            <button type="button" class="btn" id="prime" onclick="showLoginPopup()">Login</button>
+        </div>
+    </div>
+
+    <!-- Popup container -->
+    <div class="popup-container" id="loginPopup">
+        <div class="popup">
+            <form id="loginForm" action="check_login.php" method="post">
+
+                <div class="form-group">
+                    <label for="username">Username </label>
+                    <input type="text" class="form-control" name="username" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password </label>
+                    <input type="password" class="form-control" name="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-warning pop" onclick="submitLoginForm()">Submit</button>
+                    <button type="button" class="btn btn-danger pop" onclick="hideLoginPopup()">Cancel</button>
+                </div>
+                <!-- Add a new element to display error message -->
+                <div class="text-danger mt-2 loginErrorPopup"></div>
+            </form>
+        </div>
+    </div>
+    <!-- Popup container for registration -->
+    <div class="popup-container" id="registerPopup">
+        <div class="popup">
+            <form id="registerForm" action="register.php" method="post">
+                <div class="form-group">
+                    <label for="user_id">User ID </label>
+                    <input type="text" class="form-control" name="user_id" id="user_id" required>
+                </div>
+                <div class="form-group">
+                    <label for="first_name">First Name </label>
+                    <input type="text" class="form-control" name="first_name" id="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name </label>
+                    <input type="text" class="form-control" name="last_name" id="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username </label>
+                    <input type="text" class="form-control" name="username" id="register_username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password </label>
+                    <input type="password" class="form-control" name="password" id="register_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email </label>
+                    <input type="email" class="form-control" name="email" id="register_email" required>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-warning pop" onclick="submitRegisterForm()">Submit</button>
+                    <button type="button" class="btn btn-danger pop" onclick="hideRegisterPopup()">Cancel</button>
+                </div>
+                <!-- Add a new element to display success message -->
+                <div class="text-success mt-2 registerSuccessPopup"></div>
+                <!-- Add a new element to display error message -->
+                <div class="text-danger mt-2 registerErrorPopup"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showRegisterPopup() {
+            $('#registerPopup').fadeIn();
+        }
+
+        function hideRegisterPopup() {
+            $('.popup-container').fadeOut();
+            $('#registerForm')[0].reset();
+            // Clear the error message in the popup
+            $('.registerErrorPopup').text('');
+        }
+
+        function submitRegisterForm() {
+            console.log('Registration form submitted');
+            var user_id = $('#user_id').val();
+            var first_name = $('#first_name').val();
+            var last_name = $('#last_name').val();
+            var username = $('#register_username').val();
+            var password = $('#register_password').val();
+            var email = $('#register_email').val();
+
+            // Perform AJAX request to check registration details and save to the database
+            $.ajax({
+                type: 'POST',
+                url: 'register.php',
+                data: {
+                    user_id: user_id,
+                    first_name: first_name,
+                    last_name: last_name,
+                    username: username,
+                    password: password,
+                    email: email
+                },
+                dataType: 'json', // Expecting JSON response from the server
+                success: function (response) {
+                    console.log('Response from server:', response);
+                    handleRegisterResponse(response);
+                },
+                error: function () {
+                    // Handle the error
+                    $('.registerErrorPopup').text('Error occurred during registration. Please try again.').css('color', 'red');
+                }
+            });
+
+            // Prevent the default form submission
+            return false;
+        }
+
+        function handleRegisterResponse(response) {
+            console.log(response); // Add this line for debugging
+
+            // Assuming the response is already a JSON object
+            var jsonResponse = response;
+
+            if (jsonResponse.status === 'success') {
+                // Display success message and close the popup
+                $('.registerSuccessPopup').text('Registration successful.').css('color', 'green');
+                setTimeout(function () {
+                    hideRegisterPopup();
+                }, 2000); // Close the popup after 2 seconds
+            } else {
+                // Show the specific error message in the popup
+                $('.registerErrorPopup').text(jsonResponse.message || 'Error occurred during registration.').css('color', 'red');
+            }
+        }
+
+
+    </script>
+
+
+    <script>
+        function showLoginPopup() {
+            $('#loginPopup').fadeIn();
+        }
+
+        function hideLoginPopup() {
+            $('.popup-container').fadeOut();
+            $('#loginForm')[0].reset();
+            // Clear the error message in the popup
+            $('.loginErrorPopup').text('');
+        }
+
+        function submitLoginForm() {
+            console.log('Form submitted');
+            var username = $('#username').val();
+            var password = $('#password').val();
+
+            // Perform AJAX request to check login credentials against the database
+            $.ajax({
+                type: 'POST',
+                url: 'check_login.php',
+                data: { username: username, password: password },
+                dataType: 'json', // Expecting JSON response from the server
+                success: function (response) {
+                    console.log('Response from server:', response);
+                    handleLoginResponse(response);
+                },
+
+                error: function () {
+                    // Handle the error
+                    $('.loginErrorPopup').text('Error occurred during login. Please try again.').css('color', 'red');
+                }
+            });
+
+            // Prevent the default form submission
+            return false;
+        }
+
+        function handleLoginResponse(response) {
+            console.log(response); // Add this line for debugging
+
+            // Assuming the response is already a JSON object
+            var jsonResponse = response;
+
+            if (jsonResponse.status === 'success') {
+                // Redirect to admin.php on successful login
+                window.location.href = 'admin.php';
+            } else {
+                // Show the error message in the popup
+                $('.loginErrorPopup').text(jsonResponse.message || 'Invalid username or password').css('color', 'red');
+            }
+        }
+
+    </script>
+</body>
+
+</html>
